@@ -1,6 +1,6 @@
 # ASCII Video Converter
 
-This project converts videos to ASCII art and allows playing them in the console.  
+This project converts videos to ASCII
 
 ---
 
