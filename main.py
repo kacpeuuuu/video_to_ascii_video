@@ -1,6 +1,7 @@
 import cv2
-import os
 from PIL import Image, ImageFont, ImageDraw
+import sys
+import os
 import numpy as np
 
 class ASCII_CONVERTER:
@@ -9,6 +10,8 @@ class ASCII_CONVERTER:
         self.width = width
         self.height = height
         self.font_size = font_size
+
+
 
     def pick_character(self, gray_rgb_val):
         index = gray_rgb_val * int(len(self.characters)-1) // 256
@@ -61,13 +64,10 @@ class ASCII_CONVERTER:
         img = img.resize((self.width, self.height))
 
         img_np = np.array(img)
-        
-        
-        img_bgr = cv2.cvtColor(img_np, cv2.COLOR_GRAY2BGR)
         # cv2.imwrite("bleble.png", img_bgr) #for debugging purposes only
 
 
-        return img_bgr
+        return img_np
 
     
 
@@ -79,7 +79,8 @@ def video_slicer(path_to_video, path_to_output="output.mp4", font_size=10, chara
     total_frames = int(captured_video.get(cv2.CAP_PROP_FRAME_COUNT))
 
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    out = cv2.VideoWriter(path_to_output, fourcc, fps, (width, height)) 
+
+    out = cv2.VideoWriter(path_to_output, fourcc, fps, (width, height), isColor=False) 
 
     converter = ASCII_CONVERTER(width, height, font_size, characters)
 
@@ -100,7 +101,30 @@ def video_slicer(path_to_video, path_to_output="output.mp4", font_size=10, chara
 
 
 
-        
+def main():
+    if len(sys.argv) < 2:
+        print("Usage:")
+        print("  python ascii_video.py <input_video> [output_video] [font_size] [characters]")
+        print("  ***characters should be arranged from dark to white")
+        print("\nExamples:")
+        print("  python ascii_video.py input.mp4")
+        print("  python ascii_video.py input.mp4 output.mp4 12 \"@#*:. \"")
+        sys.exit(1)
+
+    path_to_video = sys.argv[1]
+    path_to_output = sys.argv[2] if len(sys.argv) > 2 else "output.mp4"
+    font_size = int(sys.argv[3]) if len(sys.argv) > 3 else 10
+    characters = sys.argv[4] if len(sys.argv) > 4 else "@#=-. "
+
+    if not os.path.exists(path_to_video):
+        print(f"Error: input video '{path_to_video}' does not exist.")
+        sys.exit(1)
+
+    print(f"Converting '{path_to_video}' → '{path_to_output}'")
+    print(f"Font size: {font_size}, Characters: \"{characters}\"")
+
+    video_slicer(path_to_video, path_to_output, font_size, characters)
 
 
-video_slicer("short.mp4")
+if __name__ == "__main__":
+    main()
