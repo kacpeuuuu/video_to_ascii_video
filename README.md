@@ -13,14 +13,6 @@ Therefore:
 
 ---
 
-## Features
-
-- Convert videos to ASCII art at full resolution.  
-- Play ASCII videos in the console.  
-- Fast and lightweight pipeline using OpenCV for video I/O and PIL for text rendering.  
-
----
-
 ## Requirements
 
 - Python 3.9+  
